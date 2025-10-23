@@ -1,8 +1,79 @@
+
 # Sistema de Controle de Estoque
 
-Este repositório contém uma aplicação web simples para gestão de produtos e estoque. A aplicação possui um backend em Flask e um front-end estático (HTML/JS/CSS) dentro da pasta `front-end`.
+Este repositório contém uma aplicação web simples para gestão de produtos e estoque. A aplicação possui um backend em Flask e um front-end estático (HTML/JS/CSS).
 
-Principais funcionalidades:
+### Este projeto foi desenvolvido como trabalho acadêmico para a faculdade.
+
+## Sobre
+
+Aplicação de controle de estoque pensada para pequenos comércios, vendedores autônomos e estabelecimentos que precisam gerenciar produtos, quantidades e validade de forma simples. Também serve como projeto didático para estudantes que estão aprendendo a integrar Flask com um front-end estático e persistência em SQLite.
+
+## Principais benefícios:
+- Permite registrar produtos, acompanhar entradas e saídas de estoque e localizar itens próximos do fim do estoque.
+- Interface simples para funcionários ou gerentes locais.
+- Fácil de rodar localmente e adaptar a negócios pequenos.
+
+## Capturas de Tela
+
+Galeria de capturas disponíveis em `docs/`:
+
+<table>
+   <tr>
+      <td align="center">
+         <img src="docs/tela_login.png" alt="Tela de login" width="360" />
+         <br/>Tela de login
+      </td>
+      <td align="center">
+         <img src="docs/tela_home.png" alt="Tela principal" width="360" />
+         <br/>Tela principal
+      </td>
+   </tr>
+
+   <tr>
+      <td align="center">
+         <img src="docs/filtro_baixoEstoque.png" alt="Filtro baixo estoque" width="360" />
+         <br/>Filtro (baixo estoque)
+      </td>
+      <td align="center">
+         <img src="docs/categorias.png" alt="Categorias" width="360" />
+         <br/>Categorias
+      </td>
+   </tr>
+   <tr>
+      <td align="center">
+         <img src="docs/tela_home2.png" alt="Tela principal 2" width="360" />
+         <br/>Tela principal (variante)
+      </td>
+      <td align="center">
+         <img src="docs/produto_cadastrado.png" alt="Produto cadastrado" width="360" />
+         <br/>Produto cadastrado
+      </td>
+   </tr>
+   <tr>
+      <td align="center">
+         <img src="docs/entrada_produto.png" alt="Entrada de produto" width="360" />
+         <br/>Entrada de produto
+      </td>
+      <td align="center">
+         <img src="docs/saida_produto.png" alt="Saída de produto" width="360" />
+         <br/>Saída de produto
+      </td>
+   </tr>
+   <tr>
+      <td align="center">
+         <img src="docs/editar_produto.png" alt="Editar produto" width="360" />
+         <br/>Editar produto
+      </td>
+      <td align="center">
+         <img src="docs/excluir_produto.png" alt="Excluir produto" width="360" />
+         <br/>Excluir produto
+      </td>
+   </tr>
+</table>
+
+
+## Principais funcionalidades:
 - Autenticação de usuários (login/registro)
 - CRUD de produtos
 - Controle de entradas/saídas de estoque
@@ -45,11 +116,9 @@ Principais funcionalidades:
 
    python backend/app.py
 
-5. Abra o navegador em http://127.0.0.1:5000 e acesse a aplicação. Use a rota `/login` para autenticar.
+5. Abra o navegador em http://127.0.0.1:5000 e acesse a aplicação. Use `admin@example.com` e `senha123` para se autenticar.
 
-Observações:
-- O ponto de entrada correto do servidor é `backend/app.py` — não existe `src/main.py` neste repositório.
-- Ao executar pela primeira vez, as tabelas SQLite serão criadas automaticamente pelas funções em `db_usuario.py` e `db_produto.py`.
+
 
 ## Dependências
 
