@@ -116,7 +116,8 @@ Galeria de capturas disponíveis em `docs/`:
 
    python backend/app.py
 
-5. Abra o navegador em http://127.0.0.1:5000 e acesse a aplicação. Use `admin@example.com` e `senha123` para se autenticar.
+5. Abra o navegador em http://127.0.0.1:5000 e acesse a aplicação. 
+   Use `admin@example.com` e `senha123` para se autenticar.
 
 
 
