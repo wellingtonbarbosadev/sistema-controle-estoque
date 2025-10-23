@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Estoque</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="fas fa-boxes"></i> Sistema de Controle de Estoque</a></li>
+                    <li class="user-info">
+                        <div class="user-menu">
+                            <span class="user-name">
+                                <i class="fas fa-user"></i>
+                                <span id="userName">Usuário</span>
+                            </span>
+                            <button class="btn-logout" onclick="fazerLogout()" title="Sair">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="title-section">
+            <h1>Controle de Estoque</h1>
+            <button class="btn-primary" onclick="abrirModalCadastro()">
+                <i class="fas fa-plus"></i> Adicionar Produto
+            </button>
+        </div>
+
+        <!-- Seção de Filtros -->
+        <div class="filters-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar produtos..." onkeyup="filtrarProdutos()">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <select id="categoryFilter" onchange="filtrarProdutos()">
+                <option value="">Todas as categorias</option>
+            </select>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="totalProdutos">0</span>
+                    <span class="stat-label">Total de Produtos</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="totalItens">0</span>
+                    <span class="stat-label">Itens em Estoque</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="valorTotal">R$ 0,00</span>
+                    <span class="stat-label">Valor Total</span>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-number" id="estoquesBaixos">0</span>
+                    <span class="stat-label">Estoque Baixo</span>
+                </div>
+                <button id="estoqueBaixoFilter" class="btn-filter-stat" onclick="alternarFiltroEstoqueBaixo()" title="Mostrar estoque baixo primeiro">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabela de Produtos -->
+        <div class="table-container">
+            <table id="produtosTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Quantidade</th>
+                        <th>Valor Total</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="produtosTableBody">
+                    <!-- Produtos serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-box-open"></i>
+                <h3>Nenhum produto cadastrado</h3>
+                <p>Clique em "Adicionar Produto" para começar</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Cadastro/Edição -->
+    <div id="modalProduto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Adicionar Produto</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <form id="formProduto" onsubmit="salvarProduto(event)">
+                <div class="form-group">
+                    <label for="nome">Nome do Produto*</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoria">Categoria*</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="preco">Preço (R$)*</label>
+                        <input type="number" id="preco" name="preco" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade*</label>
+                        <input type="number" id="quantidade" name="quantidade" min="0" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Entrada/Saída -->
+    <div id="modalMovimentacao" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="movimentacaoTitle">Movimentação de Estoque</h2>
+                <span class="close" onclick="fecharModalMovimentacao()">&times;</span>
+            </div>
+            <form id="formMovimentacao" onsubmit="processarMovimentacao(event)">
+                <div class="produto-info">
+                    <h3 id="produtoNome"></h3>
+                    <p>Estoque atual: <span id="estoqueAtual"></span> unidades</p>
+                </div>
+                <div class="form-group">
+                    <label for="quantidadeMovimentacao">Quantidade</label>
+                    <input type="number" id="quantidadeMovimentacao" name="quantidade" min="1" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="fecharModalMovimentacao()">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="btnConfirmarMovimentacao">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="modalConfirmacao" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmar Exclusão</h2>
+                <span class="close" onclick="fecharModalConfirmacao()">&times;</span>
+            </div>
+            <div class="confirmacao-content">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <p>Tem certeza que deseja excluir este produto?</p>
+                <p><strong id="produtoParaExcluir"></strong></p>
+                <p class="warning-text">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="fecharModalConfirmacao()">Cancelar</button>
+                <button type="button" class="btn-danger" onclick="confirmarExclusao()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast de Notificações -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+            <i class="fas fa-times toast-close" onclick="fecharToast()"></i>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Função para fazer logout
+        function fazerLogout() {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                window.location.href = '/logout';
+            }
+        }
+        
+        // Verificar se há erro de autenticação e redirecionar para login
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se a página foi carregada devido a erro de autenticação
+            if (window.location.search.includes('auth_error=1')) {
+                mostrarToast('Sessão expirada. Faça login novamente.', 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

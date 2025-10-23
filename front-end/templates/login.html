@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Controle de Estoque</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: var(--bg-primary);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .login-icon {
+            width: 4rem;
+            height: 4rem;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-primary);
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+            outline: none;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .input-icon input {
+            padding-left: 2.5rem;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-login:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: var(--danger-color);
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            border: 1px solid #fecaca;
+        }
+        
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .forgot-password {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        /* Modal de Esqueci Senha */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background-color: var(--bg-primary);
+            margin: 0;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h2 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            margin: 0;
+        }
+        
+        .close {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .close:hover {
+            color: var(--text-primary);
+        }
+        
+        .success-message {
+            background: #f0f9ff;
+            color: var(--primary-color);
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            border: 1px solid #bae6fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h1>Sistema de Controle de Estoque</h1>
+            <p>Faça login para acessar o sistema</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        
+        <form id="loginForm" onsubmit="fazerLogin(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="senha" name="senha" required placeholder="Digite sua senha">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-login" id="btnLogin">
+                <span class="loading" id="loading">
+                    <div class="spinner"></div>
+                    Entrando...
+                </span>
+                <span id="loginText">Entrar</span>
+            </button>
+        </form>
+        
+        <div class="forgot-password">
+            <a href="#" onclick="abrirModalEsqueciSenha()">Esqueci minha senha</a>
+        </div>
+    </div>
+
+    <!-- Modal de Esqueci Senha -->
+    <div id="modalEsqueciSenha" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Alterar Senha</h2>
+                <span class="close" onclick="fecharModalEsqueciSenha()">&times;</span>
+            </div>
+            
+            <div id="successMessage" class="success-message" style="display: none;"></div>
+            <div id="errorMessageModal" class="error-message" style="display: none;"></div>
+            
+            <form id="formEsqueciSenha" onsubmit="alterarSenhaEsqueci(event)">
+                <div class="form-group">
+                    <label for="emailEsqueci">Email</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="emailEsqueci" name="email" required placeholder="seu@email.com">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="novaSenhaEsqueci">Nova Senha</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="novaSenhaEsqueci" name="nova_senha" required minlength="6" placeholder="Digite sua nova senha">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmarSenhaEsqueci">Confirmar Nova Senha</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmarSenhaEsqueci" name="confirmar_senha" required minlength="6" placeholder="Confirme sua nova senha">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-login" id="btnAlterarSenha">
+                    <span class="loading" id="loadingAlterar">
+                        <div class="spinner"></div>
+                        Alterando...
+                    </span>
+                    <span id="alterarText">Alterar Senha</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function mostrarErro(mensagem) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = mensagem;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function mostrarLoading(mostrar) {
+            const loading = document.getElementById('loading');
+            const loginText = document.getElementById('loginText');
+            const btnLogin = document.getElementById('btnLogin');
+            
+            if (mostrar) {
+                loading.style.display = 'flex';
+                loginText.style.display = 'none';
+                btnLogin.disabled = true;
+            } else {
+                loading.style.display = 'none';
+                loginText.style.display = 'inline';
+                btnLogin.disabled = false;
+            }
+        }
+        
+        async function fazerLogin(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const email = formData.get('email');
+            const senha = formData.get('senha');
+            
+            mostrarLoading(true);
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirecionar para a página principal
+                    window.location.href = '/';
+                } else {
+                    mostrarErro(result.message || 'Erro ao fazer login');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                mostrarErro('Erro de conexão. Tente novamente.');
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+        
+        // Funções do Modal de Esqueci Senha
+        function abrirModalEsqueciSenha() {
+            document.getElementById('formEsqueciSenha').reset();
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessageModal').style.display = 'none';
+            document.getElementById('modalEsqueciSenha').style.display = 'block';
+        }
+        
+        function fecharModalEsqueciSenha() {
+            document.getElementById('modalEsqueciSenha').style.display = 'none';
+        }
+        
+        function mostrarErroModal(mensagem) {
+            const errorDiv = document.getElementById('errorMessageModal');
+            errorDiv.textContent = mensagem;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function mostrarSucessoModal(mensagem) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = mensagem;
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function mostrarLoadingAlterar(mostrar) {
+            const loading = document.getElementById('loadingAlterar');
+            const alterarText = document.getElementById('alterarText');
+            const btnAlterar = document.getElementById('btnAlterarSenha');
+            
+            if (mostrar) {
+                loading.style.display = 'flex';
+                alterarText.style.display = 'none';
+                btnAlterar.disabled = true;
+            } else {
+                loading.style.display = 'none';
+                alterarText.style.display = 'inline';
+                btnAlterar.disabled = false;
+            }
+        }
+        
+        async function alterarSenhaEsqueci(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const email = formData.get('email');
+            const novaSenha = formData.get('nova_senha');
+            const confirmarSenha = formData.get('confirmar_senha');
+            
+            // Validações
+            if (novaSenha !== confirmarSenha) {
+                mostrarErroModal('As senhas não coincidem');
+                return;
+            }
+            
+            if (novaSenha.length < 6) {
+                mostrarErroModal('A nova senha deve ter pelo menos 6 caracteres');
+                return;
+            }
+            
+            mostrarLoadingAlterar(true);
+            
+            try {
+                const response = await fetch('/atualizar-senha', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        nova_senha: novaSenha
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarSucessoModal(result.message);
+                    setTimeout(() => {
+                        fecharModalEsqueciSenha();
+                    }, 2000);
+                } else {
+                    mostrarErroModal(result.message || 'Erro ao alterar senha');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao alterar senha:', error);
+                mostrarErroModal('Erro de conexão. Tente novamente.');
+            } finally {
+                mostrarLoadingAlterar(false);
+            }
+        }
+        
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalEsqueciSenha');
+            if (event.target === modal) {
+                fecharModalEsqueciSenha();
+            }
+        }
+        
+        // Focar no campo de email ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').focus();
+        });
+    </script>
+</body>
+</html>
