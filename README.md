@@ -1,51 +1,60 @@
-# Sistema de Controle do Estoque de produtos
+# Sistema de Controle de Estoque
 
-- Esse projeto consiste no desenvolvimento de um sistema de controle de produtos para qualquer estabelecimento que queira ter um gestão mais eficiente dos seus produtos. Pois, existem no sistema funcionalidades como cadastro de produtos, controle de estoque , controle de validade , um banco de dados para armazenar todos os dados dos produtos , uma simulaçao do cliente e uma interface amigável para os funcionarios dos estabelecimentos conseguirem utilizar o sistema.
+Este repositório contém uma aplicação web simples para gestão de produtos e estoque. A aplicação possui um backend em Flask e um front-end estático (HTML/JS/CSS) dentro da pasta `front-end`.
 
----
+Principais funcionalidades:
+- Autenticação de usuários (login/registro)
+- CRUD de produtos
+- Controle de entradas/saídas de estoque
+- Listagem de categorias e informações do usuário
 
-## Como rodar o programa?
+## Estrutura do projeto
 
-- git clone: https://github.com/pedro-kalili-07/sistema-controle-estoque.git
-- cd sistema-controle-estoque
-- python -m venv venv
-- no Windows: venv/scripts/active
-- no Linux/macOS: source venv/bin/activate
-- pip install -r requirements.txt
-- python src/main.py
+- `backend/` — código do servidor Flask
+  - `app.py` — ponto de entrada do backend (inicia o servidor)
+  - `db_produto.py`, `db_usuario.py` — acesso ao SQLite e funções de persistência
+  - `estoque.db`, `usuario.db` — bancos SQLite usados pela aplicação
+- `front-end/` — arquivos estáticos e templates usados pelo Flask
+  - `templates/` — `index.html`, `login.html`
+  - `static/` — CSS e JS (ex: `static/js/app.js`)
+- `requirements.txt` — dependências Python
+- `README.md` — este arquivo
 
----
+## Como rodar a aplicação (local)
 
-## Estrutura do projeto e Funcionalidades
+1. Clone o repositório:
 
-- `main.py` → Ponto de entrada do sistema, coordena o fluxo principal.
+   git clone https://github.com/wellingtonbarbosadev/sistema-controle-estoque.git
+   cd sistema-controle-estoque
 
-- `produto.py` -> Contém a classe Produto, com atributos (nome, categoria, quantidade, validade) e métodos que fazem sentido no nível do produto (ex: verificar_validade(), atualizar_quantidade()).
+2. Crie e ative um ambiente virtual (recomendado):
 
-- `cadastro_produtos.py`-> Responsável pelo CRUD (Create, Read, Update, Delete) de produtos.
-  Aqui você vai usar a classe Produto + as funções de banco (bd_produtos.py).
-- `controle_validade.py`-> Foca apenas em verificar prazos de validade, gerar alertas e priorizar produtos próximos do vencimento.
+   # macOS / Linux
+   python -m venv venv
+   source venv/bin/activate
 
-- `controle_estoque`-> Gerencia as quantidades em estoque(entradas,saídas,limites)
+   # Windows (PowerShell)
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
 
-- `cliente.py`-> Simula a ação de clientes comprando (retira produtos do estoque).
-  É aqui que você conecta as regras de controle_quantidade e cadastro_produtos.
+3. Instale as dependências:
 
-- `interface.py`→ Interface gráfica do sistema (Tkinter), conecta as funcionalidades de forma visual.
+   pip install -r requirements.txt
 
-- `bd_produtos.py` → Camada de acesso ao banco SQLite (criação de tabelas, consultas, alterações).
+4. Inicie o backend (o servidor Flask usa os templates e static de `front-end`):
 
----
+   python backend/app.py
 
-## Tecnologias utilizadas
+5. Abra o navegador em http://127.0.0.1:5000 e acesse a aplicação. Use a rota `/login` para autenticar.
 
-- Python 3
-- Biblioteca Tkinter para interface gráfica
-- Banco de dados SQLite
-- Pandas para a manipulação e análise de dados
+Observações:
+- O ponto de entrada correto do servidor é `backend/app.py` — não existe `src/main.py` neste repositório.
+- Ao executar pela primeira vez, as tabelas SQLite serão criadas automaticamente pelas funções em `db_usuario.py` e `db_produto.py`.
 
----
+## Dependências
 
-## Documentação
+As dependências estão listadas em `requirements.txt` (Flask, pandas, etc.).
 
-- [Documentação](docs/documentacao.md)
+## Contato
+
+Se precisar de ajuda com execução ou quiser melhorias, abra uma issue ou entre em contato com o mantenedor.
